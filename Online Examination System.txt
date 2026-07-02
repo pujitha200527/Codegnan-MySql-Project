@@ -1,0 +1,328 @@
+mysql> CREATE DATABASE online_exam_system;
+Query OK, 1 row affected (0.03 sec)
+
+mysql> USE online_exam_system;
+Database changed
+mysql> CREATE TABLE students(
+    -> student_id INT PRIMARY KEY AUTO_INCREMENT,
+    -> student_name VARCHAR(50),
+    -> email VARCHAR(50),
+    -> phone VARCHAR(15),
+    -> course VARCHAR(30),
+    -> join_date DATE
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> CREATE TABLE subjects(
+    -> subject_id INT PRIMARY KEY AUTO_INCREMENT,
+    -> subject_name VARCHAR(50),
+    -> description VARCHAR(100)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> CREATE TABLE exams(
+    -> exam_id INT PRIMARY KEY AUTO_INCREMENT,
+    -> exam_name VARCHAR(50),
+    -> exam_date DATE,
+    -> duration INT,
+    -> total_marks INT,
+    -> student_id INT,
+    -> subject_id INT,
+    -> FOREIGN KEY(student_id) REFERENCES students(student_id),
+    -> FOREIGN KEY(subject_id) REFERENCES subjects(subject_id)
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> CREATE TABLE questions(
+    -> question_id INT PRIMARY KEY AUTO_INCREMENT,
+    -> question_text VARCHAR(200),
+    -> option_a VARCHAR(50),
+    -> option_b VARCHAR(50),
+    -> option_c VARCHAR(50),
+    -> option_d VARCHAR(50),
+    -> correct_option CHAR(1),
+    -> exam_id INT,
+    -> FOREIGN KEY(exam_id) REFERENCES exams(exam_id)
+    -> );
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> CREATE TABLE results(
+    -> result_id INT PRIMARY KEY AUTO_INCREMENT,
+    -> obtained_marks INT,
+    -> grade CHAR(2),
+    -> result_date DATE,
+    -> student_id INT,
+    -> question_id INT,
+    -> FOREIGN KEY(student_id) REFERENCES students(student_id),
+    -> FOREIGN KEY(question_id) REFERENCES questions(question_id)
+    -> );
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> INSERT INTO students(student_name,email,phone,course,join_date)
+    -> VALUES
+    -> ('Rahul','rahul@gmail.com','9876543210','BCA','2026-01-01'),
+    -> ('Anjali','anjali@gmail.com','9876543211','BSc','2026-01-02'),
+    -> ('Kiran','kiran@gmail.com','9876543212','BCA','2026-01-03'),
+    -> ('Priya','priya@gmail.com','9876543213','BTech','2026-01-04'),
+    -> ('Arjun','arjun@gmail.com','9876543214','BCom','2026-01-05');
+Query OK, 5 rows affected (0.04 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO subjects(subject_name,description)
+    -> VALUES
+    -> ('SQL','Database'),
+    -> ('Python','Programming'),
+    -> ('Java','OOP'),
+    -> ('DBMS','Database Concepts'),
+    -> ('HTML','Web Development');
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO exams(exam_name,exam_date,duration,total_marks,student_id,subject_id)
+    -> VALUES
+    -> ('SQL Test','2026-07-10',60,100,1,1),
+    -> ('Python Test','2026-07-11',90,100,2,2),
+    -> ('Java Test','2026-07-12',60,100,3,3),
+    -> ('DBMS Test','2026-07-13',90,100,4,4),
+    -> ('HTML Test','2026-07-14',45,50,5,5);
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO questions(question_text,option_a,option_b,option_c,option_d,correct_option,exam_id)
+    -> VALUES
+    -> ('SQL stands for?','Structured Query Language','Simple Query Language','Standard Query','None','A',1),
+    -> ('Python is?','Compiler','Interpreter','OS','Browser','B',2),
+    -> ('Java is?','Language','Database','OS','Browser','A',3),
+    -> ('DBMS means?','Database','Operating System','Compiler','Editor','A',4),
+    -> ('HTML is?','Markup','Language','Database','Compiler','A',5);
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO results(obtained_marks,grade,result_date,student_id,question_id)
+    -> VALUES
+    -> (95,'A','2026-07-15',1,1),
+    -> (89,'A','2026-07-15',2,2),
+    -> (76,'B','2026-07-15',3,3),
+    -> (68,'C','2026-07-15',4,4),
+    -> (48,'D','2026-07-15',5,5);
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM students;
++------------+--------------+------------------+------------+--------+------------+
+| student_id | student_name | email            | phone      | course | join_date  |
++------------+--------------+------------------+------------+--------+------------+
+|          1 | Rahul        | rahul@gmail.com  | 9876543210 | BCA    | 2026-01-01 |
+|          2 | Anjali       | anjali@gmail.com | 9876543211 | BSc    | 2026-01-02 |
+|          3 | Kiran        | kiran@gmail.com  | 9876543212 | BCA    | 2026-01-03 |
+|          4 | Priya        | priya@gmail.com  | 9876543213 | BTech  | 2026-01-04 |
+|          5 | Arjun        | arjun@gmail.com  | 9876543214 | BCom   | 2026-01-05 |
++------------+--------------+------------------+------------+--------+------------+
+5 rows in set (0.03 sec)
+
+mysql> SELECT * FROM subjects;
++------------+--------------+-------------------+
+| subject_id | subject_name | description       |
++------------+--------------+-------------------+
+|          1 | SQL          | Database          |
+|          2 | Python       | Programming       |
+|          3 | Java         | OOP               |
+|          4 | DBMS         | Database Concepts |
+|          5 | HTML         | Web Development   |
++------------+--------------+-------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM exams;
++---------+-------------+------------+----------+-------------+------------+------------+
+| exam_id | exam_name   | exam_date  | duration | total_marks | student_id | subject_id |
++---------+-------------+------------+----------+-------------+------------+------------+
+|       1 | SQL Test    | 2026-07-10 |       60 |         100 |          1 |          1 |
+|       2 | Python Test | 2026-07-11 |       90 |         100 |          2 |          2 |
+|       3 | Java Test   | 2026-07-12 |       60 |         100 |          3 |          3 |
+|       4 | DBMS Test   | 2026-07-13 |       90 |         100 |          4 |          4 |
+|       5 | HTML Test   | 2026-07-14 |       45 |          50 |          5 |          5 |
++---------+-------------+------------+----------+-------------+------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM questions;
++-------------+-----------------+---------------------------+-----------------------+----------------+----------+----------------+---------+
+| question_id | question_text   | option_a                  | option_b              | option_c       | option_d | correct_option | exam_id |
++-------------+-----------------+---------------------------+-----------------------+----------------+----------+----------------+---------+
+|           1 | SQL stands for? | Structured Query Language | Simple Query Language | Standard Query | None     | A              |       1 |
+|           2 | Python is?      | Compiler                  | Interpreter           | OS             | Browser  | B              |       2 |
+|           3 | Java is?        | Language                  | Database              | OS             | Browser  | A              |       3 |
+|           4 | DBMS means?     | Database                  | Operating System      | Compiler       | Editor   | A              |       4 |
+|           5 | HTML is?        | Markup                    | Language              | Database       | Compiler | A              |       5 |
++-------------+-----------------+---------------------------+-----------------------+----------------+----------+----------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM results;
++-----------+----------------+-------+-------------+------------+-------------+
+| result_id | obtained_marks | grade | result_date | student_id | question_id |
++-----------+----------------+-------+-------------+------------+-------------+
+|         1 |             95 | A     | 2026-07-15  |          1 |           1 |
+|         2 |             89 | A     | 2026-07-15  |          2 |           2 |
+|         3 |             76 | B     | 2026-07-15  |          3 |           3 |
+|         4 |             68 | C     | 2026-07-15  |          4 |           4 |
+|         5 |             48 | D     | 2026-07-15  |          5 |           5 |
++-----------+----------------+-------+-------------+------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM students WHERE course='BCA';
++------------+--------------+-----------------+------------+--------+------------+
+| student_id | student_name | email           | phone      | course | join_date  |
++------------+--------------+-----------------+------------+--------+------------+
+|          1 | Rahul        | rahul@gmail.com | 9876543210 | BCA    | 2026-01-01 |
+|          3 | Kiran        | kiran@gmail.com | 9876543212 | BCA    | 2026-01-03 |
++------------+--------------+-----------------+------------+--------+------------+
+2 rows in set (0.03 sec)
+
+mysql>
+mysql> SELECT * FROM results WHERE obtained_marks>80;
++-----------+----------------+-------+-------------+------------+-------------+
+| result_id | obtained_marks | grade | result_date | student_id | question_id |
++-----------+----------------+-------+-------------+------------+-------------+
+|         1 |             95 | A     | 2026-07-15  |          1 |           1 |
+|         2 |             89 | A     | 2026-07-15  |          2 |           2 |
++-----------+----------------+-------+-------------+------------+-------------+
+2 rows in set (0.02 sec)
+
+mysql> SELECT * FROM students
+    -> ORDER BY student_name;
++------------+--------------+------------------+------------+--------+------------+
+| student_id | student_name | email            | phone      | course | join_date  |
++------------+--------------+------------------+------------+--------+------------+
+|          2 | Anjali       | anjali@gmail.com | 9876543211 | BSc    | 2026-01-02 |
+|          5 | Arjun        | arjun@gmail.com  | 9876543214 | BCom   | 2026-01-05 |
+|          3 | Kiran        | kiran@gmail.com  | 9876543212 | BCA    | 2026-01-03 |
+|          4 | Priya        | priya@gmail.com  | 9876543213 | BTech  | 2026-01-04 |
+|          1 | Rahul        | rahul@gmail.com  | 9876543210 | BCA    | 2026-01-01 |
++------------+--------------+------------------+------------+--------+------------+
+5 rows in set (0.02 sec)
+
+mysql>
+mysql> SELECT * FROM results
+    -> ORDER BY obtained_marks DESC;
++-----------+----------------+-------+-------------+------------+-------------+
+| result_id | obtained_marks | grade | result_date | student_id | question_id |
++-----------+----------------+-------+-------------+------------+-------------+
+|         1 |             95 | A     | 2026-07-15  |          1 |           1 |
+|         2 |             89 | A     | 2026-07-15  |          2 |           2 |
+|         3 |             76 | B     | 2026-07-15  |          3 |           3 |
+|         4 |             68 | C     | 2026-07-15  |          4 |           4 |
+|         5 |             48 | D     | 2026-07-15  |          5 |           5 |
++-----------+----------------+-------+-------------+------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT course,COUNT(*)
+    -> FROM students
+    -> GROUP BY course;
++--------+----------+
+| course | COUNT(*) |
++--------+----------+
+| BCA    |        2 |
+| BSc    |        1 |
+| BTech  |        1 |
+| BCom   |        1 |
++--------+----------+
+4 rows in set (0.03 sec)
+
+mysql> SELECT course,COUNT(*)
+    -> FROM students
+    -> GROUP BY course
+    -> HAVING COUNT(*)>1;
++--------+----------+
+| course | COUNT(*) |
++--------+----------+
+| BCA    |        2 |
++--------+----------+
+1 row in set (0.02 sec)
+
+mysql> SELECT
+    -> students.student_name,
+    -> exams.exam_name
+    -> FROM students
+    -> INNER JOIN exams
+    -> ON students.student_id=exams.student_id;
++--------------+-------------+
+| student_name | exam_name   |
++--------------+-------------+
+| Rahul        | SQL Test    |
+| Anjali       | Python Test |
+| Kiran        | Java Test   |
+| Priya        | DBMS Test   |
+| Arjun        | HTML Test   |
++--------------+-------------+
+5 rows in set (0.02 sec)
+
+mysql> SELECT
+    -> students.student_name,
+    -> subjects.subject_name,
+    -> exams.exam_name
+    -> FROM students
+    -> JOIN exams
+    -> ON students.student_id=exams.student_id
+    -> JOIN subjects
+    -> ON exams.subject_id=subjects.subject_id;
++--------------+--------------+-------------+
+| student_name | subject_name | exam_name   |
++--------------+--------------+-------------+
+| Rahul        | SQL          | SQL Test    |
+| Anjali       | Python       | Python Test |
+| Kiran        | Java         | Java Test   |
+| Priya        | DBMS         | DBMS Test   |
+| Arjun        | HTML         | HTML Test   |
++--------------+--------------+-------------+
+5 rows in set (0.02 sec)
+
+mysql> SELECT
+    -> students.student_name,
+    -> subjects.subject_name,
+    -> exams.exam_name,
+    -> questions.question_text
+    -> FROM students
+    -> JOIN exams
+    -> ON students.student_id=exams.student_id
+    -> JOIN subjects
+    -> ON exams.subject_id=subjects.subject_id
+    -> JOIN questions
+    -> ON exams.exam_id=questions.exam_id;
++--------------+--------------+-------------+-----------------+
+| student_name | subject_name | exam_name   | question_text   |
++--------------+--------------+-------------+-----------------+
+| Rahul        | SQL          | SQL Test    | SQL stands for? |
+| Anjali       | Python       | Python Test | Python is?      |
+| Kiran        | Java         | Java Test   | Java is?        |
+| Priya        | DBMS         | DBMS Test   | DBMS means?     |
+| Arjun        | HTML         | HTML Test   | HTML is?        |
++--------------+--------------+-------------+-----------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT
+    -> students.student_name,
+    -> subjects.subject_name,
+    -> exams.exam_name,
+    -> questions.question_text,
+    -> results.obtained_marks,
+    -> results.grade
+    -> FROM students
+    -> JOIN exams
+    -> ON students.student_id=exams.student_id
+    -> JOIN subjects
+    -> ON exams.subject_id=subjects.subject_id
+    -> JOIN questions
+    -> ON exams.exam_id=questions.exam_id
+    -> JOIN results
+    -> ON students.student_id=results.student_id
+    -> AND questions.question_id=results.question_id;
++--------------+--------------+-------------+-----------------+----------------+-------+
+| student_name | subject_name | exam_name   | question_text   | obtained_marks | grade |
++--------------+--------------+-------------+-----------------+----------------+-------+
+| Rahul        | SQL          | SQL Test    | SQL stands for? |             95 | A     |
+| Anjali       | Python       | Python Test | Python is?      |             89 | A     |
+| Kiran        | Java         | Java Test   | Java is?        |             76 | B     |
+| Priya        | DBMS         | DBMS Test   | DBMS means?     |             68 | C     |
+| Arjun        | HTML         | HTML Test   | HTML is?        |             48 | D     |
++--------------+--------------+-------------+-----------------+----------------+-------+
+5 rows in set (0.00 sec)
+
